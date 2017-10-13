@@ -3,6 +3,7 @@ use std::convert::From;
 use std::cmp::Ordering;
 use std::ops::Deref;
 
+#[cfg(feature = "sem_string")]
 use itertools::Itertools;
 
 #[derive(Debug, Eq, PartialEq)]

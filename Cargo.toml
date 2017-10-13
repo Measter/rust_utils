@@ -3,5 +3,9 @@ name = "rust_utils"
 version = "0.1.0"
 authors = ["Stuart Haidon <serayen.sh@gmail.com>"]
 
+[features]
+default = ["sem_string"]
+sem_string = [ "itertools" ]
+
 [dependencies]
-itertools = "0.6"
+itertools = { version = "0.6", optional = true }
