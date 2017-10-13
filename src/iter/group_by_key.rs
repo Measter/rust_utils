@@ -13,14 +13,8 @@ pub trait GroupByKey<V>
 
         for val in self {
             let key = f(&val);
-            let has_val = map.contains_key(&key);
-
-            if has_val {
-                let v = map.get_mut(&key).expect("Tried to get non-existant key that should exist.");
-                v.push(val);
-            } else {
-                map.insert(key, vec![val]);
-            }
+            let vec = map.entry(key).or_insert(vec![]);
+            vec.push(val);
         }
 
         map
