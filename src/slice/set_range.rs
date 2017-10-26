@@ -1,16 +1,12 @@
-use std::collections::range::RangeArgument;
-use std::slice::SliceIndex;
-    
-pub trait SetRange<R, T>
+pub trait SetRange<T>
 {
-    fn set_range(&mut self, r: R, v: T);
+    fn set(&mut self, v: T);
 }
 
-impl<'a, R, T: Copy> SetRange<R, T> for &'a mut [T]
-    where R: RangeArgument<usize> + Iterator<Item=usize> + SliceIndex<[T], Output=[T]>
+impl<'a, T: Copy> SetRange<T> for [T]
 {
-    fn set_range(&mut self, r: R, v: T) {
-        self[r].iter_mut().for_each(|i| *i = v);
+    fn set(&mut self, v: T) {
+        self.iter_mut().for_each(|i| *i = v);
     }
 }
 
@@ -21,10 +17,7 @@ mod tests {
     #[test]
     fn range() {
         let mut vals = vec![0; 5];
-        { 
-            let mut vals = &mut vals[..];
-            vals.set_range(1..3, 2);
-        }
+        vals[1..3].set(2);
 
         assert_eq!(vals, vec![0,2,2,0,0]);
     }
