@@ -1,4 +1,3 @@
-use std::ascii::AsciiExt;
 use std::convert::From;
 use std::cmp::Ordering;
 use std::ops::Deref;
