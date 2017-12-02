@@ -44,31 +44,27 @@ impl<B: From<I::Item>, I: DoubleEndedIterator> DoubleEndedIterator for AutoMapIn
     }
 }
 
-pub trait AutoMap<A>
-    where Self: Iterator<Item=A> + Sized
+
+pub trait AutoMap : Iterator
 {
-    fn auto_map<B: From<A>>(self) -> AutoMapInto<B, Self> {
+    fn auto_map<A, B>(self) -> AutoMapInto<B, Self>
+        where Self: Sized + Iterator<Item=A>,
+            B: From<A>
+    {
         AutoMapInto{ iter: self, _b_marker: PhantomData }
     }
-}
 
-impl<I, A> AutoMap<A> for I
-    where Self: Iterator<Item=A> + Sized
-{}
-
-pub trait AutoMapCollect<A, B: From<A>>
-    where Self: Iterator<Item=A> + Sized
-{
-    fn auto_map_collect<V: FromIterator<B>>(self) -> V
-        where V: FromIterator<B>
+    fn auto_map_collect<A, B, V>(self) -> V
+        where Self: Sized + Iterator<Item=A>,
+            B: From<A>,
+            V: FromIterator<B>
     {
         self.auto_map().collect()
     }
 }
 
-impl<I,A, B: From<A>> AutoMapCollect<A, B> for I
-    where Self: Iterator<Item=A> + Sized
-{}
+impl<T: ?Sized> AutoMap for T
+    where T: Iterator {}
 
 #[cfg(test)]
 mod tests {
@@ -86,7 +82,7 @@ mod tests {
     #[test]
     fn map() {
         let ints = 1_u32..4;
-        let foos: Vec<_> = ints.auto_map::<Foo>().collect();
+        let foos: Vec<Foo> = ints.auto_map().collect();
 
         assert_eq!(foos, vec![Foo(1), Foo(2), Foo(3)]);
     }
@@ -94,7 +90,7 @@ mod tests {
     #[test]
     fn collect() {
         let ints = 1_u32..4;
-        let foos: Vec<_> = ints.clone().auto_map::<Foo>().collect();
+        let foos: Vec<Foo> = ints.clone().auto_map().collect();
         let collected: Vec<Foo> = ints.auto_map_collect();
 
         assert_eq!(foos, collected);
